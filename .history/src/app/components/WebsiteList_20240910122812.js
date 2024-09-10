@@ -4,8 +4,8 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import Card from './Card';
 import DocumentCard from './DocumentCard';
 import CardModal from './CardModal';
-import { pinyin } from 'pinyin-pro';
 import DebugCard from './DebugCard';
+import { pinyin } from 'pinyin-pro';
 
 export default function WebsiteList({ websites }) {
   const [search, setSearch] = useState('');
@@ -295,7 +295,11 @@ export default function WebsiteList({ websites }) {
           <div
             key={website.url || website.filename}
             id={`card-${website.filename}`}
-            className="masonry-item mb-4"
+            className={`masonry-item mb-4 ${
+              highlightedWebsites.includes(website)
+                ? 'animate-pulse shadow-lg ring-2 ring-blue-500'
+                : ''
+            }`}
           >
             {renderCard(website)}
           </div>

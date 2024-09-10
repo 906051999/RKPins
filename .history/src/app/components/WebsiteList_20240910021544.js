@@ -2,10 +2,8 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import Card from './Card';
-import DocumentCard from './DocumentCard';
 import CardModal from './CardModal';
 import { pinyin } from 'pinyin-pro';
-import DebugCard from './DebugCard';
 
 export default function WebsiteList({ websites }) {
   const [search, setSearch] = useState('');
@@ -193,33 +191,6 @@ export default function WebsiteList({ websites }) {
     resetHighlight();
   };
 
-  const renderCard = (website) => {
-    if (website.error || website.content === '') {
-      return (
-        <DebugCard
-          website={website}
-          error={website.error || (website.content === '' ? '文件内容为空' : undefined)}
-        />
-      );
-    } else if (website.type.includes('文档')) {
-      return (
-        <DocumentCard 
-          document={website} 
-          onClick={() => handleCardClick(website)}
-          highlightedText={highlightedText}
-        />
-      );
-    } else {
-      return (
-        <Card 
-          website={website} 
-          onClick={() => handleCardClick(website)}
-          highlightedText={highlightedText}
-        />
-      );
-    }
-  };
-
   return (
     <>
       <div className="flex justify-end items-center mb-8"></div>
@@ -290,14 +261,22 @@ export default function WebsiteList({ websites }) {
           </div>
         </div>
       )}
-      <div className="masonry sm:masonry-sm md:masonry-md lg:masonry-lg xl:masonry-xl">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {filteredWebsites.map(website => (
           <div
-            key={website.url || website.filename}
+            key={website.url}
             id={`card-${website.filename}`}
-            className="masonry-item mb-4"
+            className={`${
+              highlightedWebsites.includes(website)
+                ? 'animate-pulse shadow-lg ring-2 ring-blue-500'
+                : ''
+            }`}
           >
-            {renderCard(website)}
+            <Card 
+              website={website} 
+              onClick={() => handleCardClick(website)}
+              highlightedText={highlightedText}
+            />
           </div>
         ))}
       </div>

@@ -60,7 +60,7 @@ const Card = memo(function Card({ website, onClick, highlightedText }) {
 
   return (
     <div 
-      className="bg-white bg-opacity-80 rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300 relative cursor-pointer flex flex-col h-full min-h-[320px] max-h-[480px] min-w-[240px] max-w-[320px]"
+      className="bg-white bg-opacity-80 rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300 relative cursor-pointer flex flex-col h-full"
       onClick={onClick}
     >
       <div className="relative h-24 sm:h-32 flex items-center justify-center bg-gradient-to-r from-blue-100 to-green-100">
