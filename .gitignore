@@ -5,6 +5,7 @@ bookmark/
 backup/
 rkpins/
 data/dev/
+.history/
 
 # dependencies
 /node_modules
