@@ -19,6 +19,13 @@ const nextConfig = {
       dangerouslyAllowSVG: true,
       contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
+    env: {
+      GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+      USER_WHITELIST: process.env.USER_WHITELIST,
+      LLM_API_KEY: process.env.LLM_API_KEY,
+      LLM_API_URL: process.env.LLM_API_URL,
+      ACCESS_PASSWORD: process.env.ACCESS_PASSWORD,
+    },
     webpack: (config, { isServer }) => {
         if (!isServer) {
           config.resolve.fallback = {

@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
 import WebsiteList from './components/WebsiteList';
+import Link from 'next/link';
 
 async function getWebsites() {
   const rootDir = process.cwd();
@@ -109,6 +110,9 @@ export default async function Home() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800">RKPins</h1>
+          <Link href="/llm-chat" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            LLM 聊天
+          </Link>
         </div>
         <WebsiteList websites={websites} />
       </div>

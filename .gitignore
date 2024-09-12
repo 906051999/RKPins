@@ -7,6 +7,9 @@ rkpins/
 data/dev/
 .history/
 
+# .gitignore
+.env
+
 # dependencies
 /node_modules
 /.pnp
