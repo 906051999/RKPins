@@ -222,7 +222,7 @@ export default function WebsiteList({ websites }) {
 
   return (
     <>
-      <div className="flex justify-end items-center mb-8"></div>
+      <div className="flex justify-start items-center mb-8 mb-4">
         <button
           className={`px-4 py-2 rounded-full text-lg font-semibold transition-colors duration-200 ${
             showDocuments
@@ -233,6 +233,7 @@ export default function WebsiteList({ websites }) {
         >
           文档
         </button>
+      </div>
       <div className="mb-8 relative">
         <input
           type="text"
