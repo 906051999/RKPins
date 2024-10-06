@@ -3,12 +3,18 @@
 import { useState, useEffect } from 'react';
 import CategoryList from '../components/CategoryList';
 import Card from '../components/Card';
+import Status from '../components/Status';
 
 export default function Home() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cards, setCards] = useState([]);
   const [showCategoryList, setShowCategoryList] = useState(false);
+  const [status, setStatus] = useState({
+    totalCards: 0,
+    categories: 0,
+    lastUpdated: null
+  });
 
   useEffect(() => {
     fetchCategories();
@@ -19,6 +25,7 @@ export default function Home() {
   useEffect(() => {
     if (selectedCategory) {
       fetchCards(selectedCategory);
+      fetchStatus(selectedCategory);
     }
   }, [selectedCategory]);
 
@@ -37,6 +44,12 @@ export default function Home() {
     setCards(data);
   };
 
+  const fetchStatus = async (category) => {
+    const response = await fetch(`/api/status?category=${category}`);
+    const data = await response.json();
+    setStatus(data);
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <header className="bg-white shadow-md sticky top-0 z-10">
@@ -44,6 +57,12 @@ export default function Home() {
           <h1 className="text-3xl font-bold text-primary tracking-wide">RK Pins</h1>
         </div>
       </header>
+      <Status 
+        category={selectedCategory} 
+        cardCount={cards.length} 
+        totalCategories={categories.length}
+        lastUpdated={status.lastUpdated}
+      />
       <main className="flex-grow overflow-auto mt-4">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -52,12 +71,16 @@ export default function Home() {
             ))}
           </div>
         </div>
+
+       <div className="col-span-full flex justify-center items-center h-10">
+                <p className="text-gray-500 text-lg opacity-15">Edit By RK</p>
+              </div>
       </main>
       {showCategoryList && categories.length > 0 && (
         <CategoryList 
           categories={categories} 
           onSelectCategory={setSelectedCategory} 
-          selectedCategory={selectedCategory}  // 添加这一行
+          selectedCategory={selectedCategory}
         />
       )}
     </div>
