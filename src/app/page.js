@@ -8,9 +8,12 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cards, setCards] = useState([]);
+  const [showCategoryList, setShowCategoryList] = useState(false);
 
   useEffect(() => {
     fetchCategories();
+    const timer = setTimeout(() => setShowCategoryList(true), 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -35,30 +38,28 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="fixed top-0 left-0 right-0 z-10">
-        <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center text-white">RK Pins</h1>
-          {categories.length > 0 && (
-            <div className="mb-4 sm:mb-6">
-              <CategoryList 
-                categories={categories} 
-                onSelectCategory={setSelectedCategory} 
-              />
-            </div>
-          )}
+    <div className="flex flex-col h-screen bg-gray-100">
+      <header className="bg-white shadow-md sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-5">
+          <h1 className="text-3xl font-bold text-primary tracking-wide">RK Pins</h1>
         </div>
-        <div className="header-fold"></div>
       </header>
-      <main className="flex-grow overflow-y-auto pt-48 sm:pt-56">
-        <div className="container mx-auto px-2 sm:px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-            {cards.flat().map((card) => (
+      <main className="flex-grow overflow-auto mt-4">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {cards.map((card) => (
               <Card key={card.id} {...card} />
             ))}
           </div>
         </div>
       </main>
+      {showCategoryList && categories.length > 0 && (
+        <CategoryList 
+          categories={categories} 
+          onSelectCategory={setSelectedCategory} 
+          selectedCategory={selectedCategory}  // 添加这一行
+        />
+      )}
     </div>
   );
 }

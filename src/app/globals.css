@@ -4,36 +4,27 @@
 
 :root {
   --max-width: 1200px;
-  --border-radius: 4px;
-  --foreground: #212121;
-  --background: #f5f5f5;
-  --primary: #1976d2;
-  --primary-light: #2196f3;
-  --secondary: #00796b;
+  --border-radius: 12px;
+  --foreground: #333333;
+  --background: #f7f7f7;
+  --primary: #3498db;
+  --primary-dark: #2980b9;
+  --primary-light: #5dade2;
+  --secondary: #2ecc71;
   --card-bg: #ffffff;
   --card-border: #e0e0e0;
-  --elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  --elevation-2: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+  --elevation-1: 0 2px 4px rgba(0,0,0,0.1);
+  --elevation-2: 0 4px 8px rgba(0,0,0,0.12);
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 1rem;
-}
-
-header {
-  background: var(--primary);
-  color: white;
-  box-shadow: var(--elevation-2);
-}
-
-.header-fold {
-  height: 24px;
-  background: var(--primary-light);
 }
