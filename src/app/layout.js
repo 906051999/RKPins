@@ -1,8 +1,8 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'RKPins',
-  description: '独特的网站收藏项目',
+  title: 'RK Pins',
+  description: '跳转链接集合',
 }
 
 export default function RootLayout({ children }) {

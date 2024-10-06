@@ -1,121 +1,64 @@
-import fs from 'fs/promises';
-import path from 'path';
-import matter from 'gray-matter';
-import WebsiteList from './components/WebsiteList';
-import Link from 'next/link';
+'use client';
 
-async function getWebsites() {
-  const rootDir = process.cwd();
-  const websitesDirectory = path.join(rootDir, 'data');
-  
-  async function readFilesRecursively(dir) {
-    const entries = await fs.readdir(dir, { withFileTypes: true });
-    const files = await Promise.all(entries.map(async (entry) => {
-      const fullPath = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        return readFilesRecursively(fullPath);
-      } else if (entry.isFile() && path.extname(entry.name) === '.md') {
-        return fullPath;
-      }
-    }));
-    return files.flat().filter(Boolean);
-  }
+import { useState, useEffect } from 'react';
+import CategoryList from '../components/CategoryList';
+import Card from '../components/Card';
 
-  try {
-    const filePaths = await readFilesRecursively(websitesDirectory);
-    
-    const websites = await Promise.all(filePaths.map(async (filePath) => {
-      try {
-        const fileContents = await fs.readFile(filePath, 'utf8');
-        const { data, content } = matter(fileContents);
-        
-        const relativePath = path.relative(websitesDirectory, filePath);
-        const filenameWithoutExt = path.parse(relativePath).name;
-        
-        const defaultWebsite = {
-          title: filenameWithoutExt,
-          description: '',
-          url: '',
-          logo: '',
-          type: ['文档'],
-          tags: [],
-          content: content || '暂无内容',
-          searchableContent: '',
-          filename: filenameWithoutExt,
-          error: null // 新增错误字段
-        };
+export default function Home() {
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [cards, setCards] = useState([]);
 
-        // 检查文件是否为空
-        if (content.trim() === '') {
-          defaultWebsite.error = '文件内容为空';
-        }
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
-        const website = {
-          ...defaultWebsite,
-          ...data,
-          content: content || defaultWebsite.content,
-          filename: filenameWithoutExt
-        };
+  useEffect(() => {
+    if (selectedCategory) {
+      fetchCards(selectedCategory);
+    }
+  }, [selectedCategory]);
 
-        website.type = Array.isArray(website.type) ? website.type : [website.type].filter(Boolean);
-        website.tags = Array.isArray(website.tags) ? website.tags : [website.tags].filter(Boolean);
+  const fetchCategories = async () => {
+    const response = await fetch('/api/categories');
+    const data = await response.json();
+    setCategories(data);
+    if (data.length > 0) {
+      setSelectedCategory(data[0]);
+    }
+  };
 
-        // 从内容中提取标签
-        const contentTags = (website.content.match(/#([^\s#]+)/g) || []).map(tag => tag.substring(1));
-        website.tags = [...new Set([...website.tags, ...contentTags])];
-
-        // 将所有属性值转换为字符串并合并，包括 type 和 tags
-        const attributesString = Object.entries(website)
-          .filter(([key, value]) => key !== 'content' && key !== 'searchableContent')
-          .map(([key, value]) => {
-            if (Array.isArray(value)) {
-              return value.join(' ');
-            }
-            return String(value);
-          })
-          .join(' ');
-      
-        // 合并所有搜索内容，包括原始标签形式
-        const tagsWithHash = website.tags.map(tag => `#${tag}`).join(' ');
-        website.searchableContent = `${filenameWithoutExt} ${attributesString} ${tagsWithHash} ${website.content}`;
-
-        return website;
-      } catch (error) {
-        console.error(`处理文件 ${filePath} 时出错:`, error);
-        return {
-          filename: path.parse(filePath).name,
-          error: `处理文件时出错: ${error.message}`,
-          type: ['文档'],
-          tags: [],
-          content: '',
-          searchableContent: ''
-        };
-      }
-    }));
-
-    console.log('已加载网站：', websites); // 用于调试
-
-    return websites;
-  } catch (error) {
-    console.error('读取网站数据时出错:', error);
-    return [];
-  }
-}
-
-export default async function Home() {
-  const websites = await getWebsites();
+  const fetchCards = async (category) => {
+    const response = await fetch(`/api/cards?category=${category}`);
+    const data = await response.json();
+    setCards(data);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800">RKPins</h1>
-          <Link href="/llm-chat" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-            LLM 聊天
-          </Link>
+    <div className="flex flex-col h-screen">
+      <header className="fixed top-0 left-0 right-0 z-10">
+        <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center text-white">RK Pins</h1>
+          {categories.length > 0 && (
+            <div className="mb-4 sm:mb-6">
+              <CategoryList 
+                categories={categories} 
+                onSelectCategory={setSelectedCategory} 
+              />
+            </div>
+          )}
         </div>
-        <WebsiteList websites={websites} />
-      </div>
+        <div className="header-fold"></div>
+      </header>
+      <main className="flex-grow overflow-y-auto pt-48 sm:pt-56">
+        <div className="container mx-auto px-2 sm:px-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+            {cards.flat().map((card) => (
+              <Card key={card.id} {...card} />
+            ))}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
