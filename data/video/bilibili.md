@@ -3,6 +3,8 @@
 
 【河南某地农民老年生活举例——打烟叶-哔哩哔哩】 https://b23.tv/BW21Z9N
 
+【离子阱系统，与量子计算的前沿探索-哔哩哔哩】 https://b23.tv/8vJ1u8E
+
 【程序员告诉你清理内存的真相！绝对反直觉！】 https://www.bilibili.com/video/BV1C619Y5EQw
 
 【超乱伦的植物家族  造就最完美黄金赐福【芸香科】】 https://www.bilibili.com/video/BV1xu4y1r79x/
