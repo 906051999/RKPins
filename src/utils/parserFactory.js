@@ -1,6 +1,7 @@
 import { parseMd } from './parsers/mdParser';
 import { parseBilibili } from './parsers/bilibiliParser';
 import { parsePdd } from './parsers/pddParser';
+import { parseWeb } from './parsers/webParser';
 
 export function getParser(category, filename) {
   const lowerCategory = category.toLowerCase();
@@ -10,6 +11,8 @@ export function getParser(category, filename) {
     return parseBilibili;
   } else if (lowerCategory === 'shop' && lowerFilename.includes('pdd')) {
     return parsePdd;
+  } else if (lowerCategory === 'web' && lowerFilename.includes('private')) {
+    return parseWeb;
   } else {
     return parseMd;
   }

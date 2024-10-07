@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-export default function Card({ title, link, parser }) {
+export default function Card({ title, link, parser, description }) {
   const [copied, setCopied] = useState(false);
 
   const copyTitle = (e) => {
@@ -17,9 +17,21 @@ export default function Card({ title, link, parser }) {
       className="bg-white rounded-lg shadow-md hover:shadow-lg p-6 h-full flex flex-col"
       whileHover={{ scale: 1.02 }}
     >
-      <h2 className="text-lg font-semibold text-gray-800 leading-tight mb-4">
+      <h2 className="text-lg font-semibold text-gray-800 leading-tight mb-2">
         {title}
       </h2>
+      {description && (
+        <div className="bg-gray-50 border-l-4 border-blue-500 p-4 mb-4 flex-grow overflow-auto max-h-40">
+          <div className="flex items-start">
+            <svg className="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H6z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm text-gray-600 whitespace-pre-line break-words">
+              {description}
+            </p>
+          </div>
+        </div>
+      )}
       <div className="flex justify-between items-center mt-auto">
         <motion.div 
           className="text-sm text-gray-600 cursor-pointer hover:text-blue-600 flex items-center"

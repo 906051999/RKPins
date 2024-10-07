@@ -15,6 +15,7 @@ export default function CategoryList({ categories, onSelectCategory, selectedCat
       'music': '音乐',
       'video': '视频',
       'shop': '购物',
+      'web': '网站',
     };
     return translations[category.toLowerCase()] || category;
   };

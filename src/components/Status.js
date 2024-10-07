@@ -3,6 +3,7 @@ export default function Status({ category, cardCount, totalCategories, lastUpdat
     'music': '音乐',
     'video': '视频',
     'shop': '购物',
+    'web': '网站',
   };
 
   const translatedCategory = translations[category] || category;
