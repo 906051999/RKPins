@@ -8,6 +8,20 @@ export default function Status({ category, cardCount, totalCategories, lastUpdat
 
   const translatedCategory = translations[category] || category;
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg">
       <div className="container mx-auto p-6 space-y-4">
@@ -17,7 +31,7 @@ export default function Status({ category, cardCount, totalCategories, lastUpdat
           <StatusItem label="当前类别" value={`${translatedCategory} (${cardCount} 张卡片)`} />
           <StatusItem
             label="最后更新"
-            value={lastUpdated ? new Date(lastUpdated).toLocaleString() : 'N/A'}
+            value={formatDate(lastUpdated)}
           />
         </div>
       </div>

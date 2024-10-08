@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { getParser } from '../../../utils/parserFactory';
+import simpleGit from 'simple-git';
 
 export async function GET(request) {
   const { pathname, searchParams } = new URL(request.url);
@@ -26,17 +27,22 @@ async function handleStatusRequest(category) {
   let totalCards = 0;
   let lastUpdated = null;
 
+  const git = simpleGit();
+
   if (category) {
     const categoryPath = path.join(dataPath, category);
     const files = await fs.readdir(categoryPath);
     totalCards = files.length;
     
-    // 获取最后更新时间
+    // 获取类别中最新文件的最后更新时间
     for (const file of files) {
       const filePath = path.join(categoryPath, file);
-      const stats = await fs.stat(filePath);
-      if (!lastUpdated || stats.mtime > lastUpdated) {
-        lastUpdated = stats.mtime;
+      const logs = await git.log({ file: filePath, maxCount: 1 });
+      if (logs.latest) {
+        const fileLastUpdated = new Date(logs.latest.date);
+        if (!lastUpdated || fileLastUpdated > lastUpdated) {
+          lastUpdated = fileLastUpdated;
+        }
       }
     }
   } else {
@@ -44,6 +50,12 @@ async function handleStatusRequest(category) {
       const categoryPath = path.join(dataPath, cat);
       const files = await fs.readdir(categoryPath);
       totalCards += files.length;
+    }
+    
+    // 获取整个 data 目录的最后更新时间
+    const logs = await git.log({ file: dataPath, maxCount: 1 });
+    if (logs.latest) {
+      lastUpdated = new Date(logs.latest.date);
     }
   }
 
