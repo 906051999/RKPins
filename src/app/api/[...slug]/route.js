@@ -29,21 +29,39 @@ async function handleStatusRequest(category) {
 
   const git = simpleGit();
 
+  async function getLastUpdatedFromGit(filePath) {
+    try {
+      const logs = await git.log({ file: filePath, maxCount: 1 });
+      return logs.latest ? new Date(logs.latest.date).toISOString() : null;
+    } catch (error) {
+      console.error('Error getting Git log:', error);
+      return null;
+    }
+  }
+
+  async function getLastUpdatedFromJson() {
+    try {
+      const lastUpdatedPath = path.join(process.cwd(), 'public', 'lastUpdated.json');
+      const lastUpdatedData = JSON.parse(await fs.readFile(lastUpdatedPath, 'utf-8'));
+      return lastUpdatedData;
+    } catch (error) {
+      console.error('Error reading lastUpdated.json:', error);
+      return {};
+    }
+  }
+
   if (category) {
     const categoryPath = path.join(dataPath, category);
     const files = await fs.readdir(categoryPath);
     totalCards = files.length;
     
-    // 获取类别中最新文件的最后更新时间
-    for (const file of files) {
-      const filePath = path.join(categoryPath, file);
-      const logs = await git.log({ file: filePath, maxCount: 1 });
-      if (logs.latest) {
-        const fileLastUpdated = new Date(logs.latest.date);
-        if (!lastUpdated || fileLastUpdated > lastUpdated) {
-          lastUpdated = fileLastUpdated;
-        }
-      }
+    // 尝试从 Git 获取最后更新时间
+    lastUpdated = await getLastUpdatedFromGit(categoryPath);
+    
+    // 如果 Git 方法失败，从 JSON 文件获取
+    if (!lastUpdated) {
+      const lastUpdatedData = await getLastUpdatedFromJson();
+      lastUpdated = lastUpdatedData[category] || null;
     }
   } else {
     for (const cat of categories) {
@@ -52,17 +70,21 @@ async function handleStatusRequest(category) {
       totalCards += files.length;
     }
     
-    // 获取整个 data 目录的最后更新时间
-    const logs = await git.log({ file: dataPath, maxCount: 1 });
-    if (logs.latest) {
-      lastUpdated = new Date(logs.latest.date);
+    // 尝试从 Git 获取整个 data 目录的最后更新时间
+    lastUpdated = await getLastUpdatedFromGit(dataPath);
+    
+    // 如果 Git 方法失败，从 JSON 文件获取所有类别的最新时间
+    if (!lastUpdated) {
+      const lastUpdatedData = await getLastUpdatedFromJson();
+      lastUpdated = Object.values(lastUpdatedData).reduce((latest, current) => 
+        latest && new Date(latest) > new Date(current) ? latest : current, null);
     }
   }
 
   const status = {
     totalCards,
     categories: categories.length,
-    lastUpdated: lastUpdated ? lastUpdated.toISOString() : null
+    lastUpdated
   };
 
   return Response.json(status);
