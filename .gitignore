@@ -3,8 +3,10 @@
 # dev
 bookmark/
 backup/
-data/dev/
 .history/
+
+# Generated files
+/public/lastUpdated.json
 
 # .gitignore
 .env

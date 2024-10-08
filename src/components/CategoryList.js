@@ -52,9 +52,14 @@ export default function CategoryList({ categories, onSelectCategory, selectedCat
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 300, 
+              damping: 30 
+            }}
             className="absolute bottom-16 right-0 bg-white rounded-lg shadow-xl p-4 w-48"
           >
             <div className="flex flex-col gap-2">
@@ -70,8 +75,9 @@ export default function CategoryList({ categories, onSelectCategory, selectedCat
                       ? 'bg-black text-white border border-primary hover:bg-primary hover:text-white'
                       : 'bg-white text-primary border border-primary hover:bg-primary hover:text-white'
                   }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   {translateCategory(category)}
                 </motion.button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import CategoryList from '../components/CategoryList';
 import Card from '../components/Card';
 import Status from '../components/Status';
@@ -15,6 +15,7 @@ export default function Home() {
     categories: 0,
     lastUpdated: null
   });
+  const mainRef = useRef(null);
 
   useEffect(() => {
     fetchCategories();
@@ -50,6 +51,16 @@ export default function Home() {
     setStatus(data);
   };
 
+  const handleSelectCategory = (category) => {
+    setSelectedCategory(category);
+    if (mainRef.current) {
+      mainRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <header className="bg-white shadow-md sticky top-0 z-10">
@@ -63,7 +74,7 @@ export default function Home() {
         totalCategories={categories.length}
         lastUpdated={status.lastUpdated}
       />
-      <main className="flex-grow overflow-auto mt-4">
+      <main ref={mainRef} className="flex-grow overflow-auto mt-4">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {cards.map((card) => (
@@ -79,7 +90,7 @@ export default function Home() {
       {showCategoryList && categories.length > 0 && (
         <CategoryList 
           categories={categories} 
-          onSelectCategory={setSelectedCategory} 
+          onSelectCategory={handleSelectCategory} 
           selectedCategory={selectedCategory}
         />
       )}
